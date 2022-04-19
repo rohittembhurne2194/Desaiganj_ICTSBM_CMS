@@ -57,7 +57,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
         }
 
         public ActionResult MonthlyAttedance()
-        {
+            {
             if (SessionHandler.Current.AppId != 0)
             {
                 return View();

@@ -21,7 +21,7 @@
 
     $('#selecttype').html('<option value=0>Select Monitoring Type</option><option value=S>Waste Collection Monitoring Technology</option><option value=SS>Street Sweeping Monitoring System</option><option value=L>Liquid Waste Cleaning Monitoring System</option>');
 
-    $("#demoGrid").DataTable({
+    var table =$("#demoGrid").DataTable({
         "sDom": "ltipr",
         "order": [[1, "desc"]],
         "processing": true, // for show progress bar
@@ -41,7 +41,7 @@
                 "targets": [0],
                 "visible": false,
                 "searchable": false
-            }
+            },
                 //,
             //{
             //    "targets": [15],
@@ -49,6 +49,18 @@
             //    "searchable": false,
             //    "type": "date-eu"
             //}
+
+                {
+                    "targets": [33],
+                    "render": function (data, type, full, meta) {
+                       
+                        if (full["TOTAL_DAYS"] == 30) {
+                            table.columns([33]).visible(false);
+                        }
+                    }
+                }
+
+
             ],
 
 

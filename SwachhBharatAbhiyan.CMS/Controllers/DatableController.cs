@@ -72,7 +72,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
             //string x = gridRepository.GetDataTabelJson(sord, page, rows, _search, Request.QueryString, filtersFromSession, sidx);
 
             return gridRepository.GetDataTabelJson(sortColumn, sortColumnDir, draw, length, searchValue, start);
-        }
+            }
 
         private Dictionary<string, string> CreateFiltersDictionary(System.Web.HttpSessionStateBase Session)
         {
