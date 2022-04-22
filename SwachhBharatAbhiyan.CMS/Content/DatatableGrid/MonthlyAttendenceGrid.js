@@ -28,6 +28,7 @@
         "serverSide": true, // for process server side
         "filter": true, // this is for disable filter (search box)
         "orderMulti": false, // for disable multiple column at once
+      
         //"pageLength": 10,
 
         "ajax": {
@@ -36,33 +37,8 @@
             "datatype": "json"
         },
 
-        "columnDefs":
-            [{
-                "targets": [0],
-                "visible": false,
-                "searchable": false
-            },
-                //,
-            //{
-            //    "targets": [15],
-            //    "visible": false,
-            //    "searchable": false,
-            //    "type": "date-eu"
-            //}
-
-                {
-                    "targets": [33],
-                    "render": function (data, type, full, meta) {
-                       
-                        if (full["TOTAL_DAYS"] == 30) {
-                            table.columns([33]).visible(false);
-                        }
-                    }
-                }
-
-
-            ],
-
+       
+        "destroy": true,
 
         "columns": [
             //{ "data": "daID", "name": "daID", "autoWidth": true },
@@ -108,8 +84,48 @@
            
            
         ],
+
+
+        "columnDefs":
+            [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+
+            },
+            {
+                "targets": [34],
+                "visible": false,
+                "searchable": false
+
+            }
+                ,
+            {
+                "targets": [33],
+                "data": "day31",
+                "render": function (data, type, full, meta) {
+
+                    if (full["TOTAL_DAYS"] == 30) {
+                        // table.DataTable().columns([33]).visible(false);
+                        table.column([33]).visible(false);
+                        //column([33]).visible(false);
+
+                        //// Get the column API object
+                        //var column = table.columns([33]).visible(false);
+                        //// Toggle the visibility
+                        //column.visible(!column.visible());
+
+
+                    } else {
+                        return "<div style='cursor:pointer;display:inline-flex;'><span>" + full["TOTAL_DAYS"] + "</span></div>";
+                    }
+                }
+            }
+            ],
         // Sort: "locId DESC"
      
+    }).on('responsive-resize', function (e, datatable, columns) {
+        $(columns).find('li[data-dt-column="22"]').addClass('customColumn');
     });
 
 
