@@ -21,14 +21,38 @@
 
     $('#selecttype').html('<option value=0>Select Monitoring Type</option><option value=S>Waste Collection Monitoring Technology</option><option value=SS>Street Sweeping Monitoring System</option><option value=L>Liquid Waste Cleaning Monitoring System</option>');
 
-    var table =$("#demoGrid").DataTable({
+   var table = $("#demoGrid").DataTable({
+        //"initComplete": function (settings, json) {
+        //   // $("#demoGrid").find("[data-dt-column='33']").hide();
+        //   debugger;
+        //   var jlength = json.data.length;
+        //   //var jlenght2 = jlength - 1;
+        //   for (let i = 0; i < jlength; i++) {
+        //       var days = json.data[i].TOTAL_DAYS;
+        //       if (days == 28) {
+
+        //           table.row(1).column([31, 32, 33]).visible(false);
+        //       }
+        //       else if (days == 29) {
+
+        //           table.row(i).column([32, 33]).visible(false);
+        //       }
+        //       else if (days == 30) {
+
+        //           table.row(2).column([33]).visible(false);
+        //       }
+        //   }
+         
+         
+        
+        //},
         "sDom": "ltipr",
         "order": [[1, "desc"]],
         "processing": true, // for show progress bar
         "serverSide": true, // for process server side
         "filter": true, // this is for disable filter (search box)
         "orderMulti": false, // for disable multiple column at once
-      
+        "scrollX": true,
         //"pageLength": 10,
 
         "ajax": {
@@ -37,9 +61,83 @@
             "datatype": "json"
         },
 
-       
-        "destroy": true,
+        "columnDefs":
+            [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            },
+                {
+                    "targets": [34],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [2],
 
+                    "visible": true,
+
+                    "render": function (data, type, full, meta) {
+
+                        if (full["month_name"] == "1") {
+                            return " January";
+
+                        }
+                        else if (full["month_name"] == "2") {
+                            return " February";
+
+                        }
+                        else if (full["month_name"] == "3") {
+                            return " March";
+
+                        }
+                        else if (full["month_name"] == "4") {
+                            return " April";
+
+                        }
+                        else if (full["month_name"] == "5") {
+                            return " May";
+
+                        }
+                        else if (full["month_name"] == "6") {
+                            return " June";
+
+                        }
+                        else if (full["month_name"] == "7") {
+                            return " July";
+
+                        }
+                        else if (full["month_name"] == "8") {
+                            return " August";
+
+                        }
+                        else if (full["month_name"] == "9") {
+                            return " September";
+
+                        }
+                        else if (full["month_name"] == "10") {
+                            return " October";
+
+                        }
+                        else if (full["month_name"] == "11") {
+                            return " November ";
+
+                        }
+                        else if (full["month_name"] == "12") {
+                            return " December";
+
+                        }
+
+                        else {
+                            return "";
+
+                        }
+
+                    },
+                },
+            ],
+
+        
         "columns": [
             //{ "data": "daID", "name": "daID", "autoWidth": true },
             { "data": "daID", "name": "daID", "autoWidth": true },
@@ -81,55 +179,42 @@
             { "data": "day31", "name": "day31", "autoWidth": true },
             { "data": "TOTAL_DAYS", "name": "TOTAL_DAYS", "autoWidth": true },
            
-           
+         
            
         ],
-
-
-        "columnDefs":
-            [{
-                "targets": [0],
-                "visible": false,
-                "searchable": false
-
-            },
-            {
-                "targets": [34],
-                "visible": false,
-                "searchable": false
-
-            }
-                ,
-            {
-                "targets": [33],
-                "data": "day31",
-                "render": function (data, type, full, meta) {
-
-                    if (full["TOTAL_DAYS"] == 30) {
-                        // table.DataTable().columns([33]).visible(false);
-                        table.column([33]).visible(false);
-                        //column([33]).visible(false);
-
-                        //// Get the column API object
-                        //var column = table.columns([33]).visible(false);
-                        //// Toggle the visibility
-                        //column.visible(!column.visible());
-
-
-                    } else {
-                        return "<div style='cursor:pointer;display:inline-flex;'><span>" + full["TOTAL_DAYS"] + "</span></div>";
-                    }
-                }
-            }
-            ],
-        // Sort: "locId DESC"
+    
      
-    }).on('responsive-resize', function (e, datatable, columns) {
-        $(columns).find('li[data-dt-column="22"]').addClass('customColumn');
     });
 
 
+    $('#demoGrid tbody').on('click', 'tr', function () {
+
+        debugger;
+        
+        var da = table.row(this).data();
+        var days = da.TOTAL_DAYS;
+    
+        if (days == 28) {
+            $("#demoGrid").find("[data-dt-column='31']").css("display", "none");
+            $("#demoGrid").find("[data-dt-column='32']").css("display", "none");
+            $("#demoGrid").find("[data-dt-column='33']").css("display", "none");
+        }
+        else if (days == 29) {
+            $("#demoGrid").find("[data-dt-column='32']").css("display", "none");
+            $("#demoGrid").find("[data-dt-column='33']").css("display", "none");
+        }
+        else if (days == 30) {
+           
+            $("#demoGrid").find("[data-dt-column='33']").css("display", "none");
+        }
+
+    });
+   
+
 });
+
+
+
 
 function test(id) {
     window.location.href = "/Attendence/Location?daId=" + id;
