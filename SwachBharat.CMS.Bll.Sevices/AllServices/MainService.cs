@@ -133,29 +133,8 @@ namespace SwachBharat.CMS.Bll.Services
             {
                 AEmployeeDetailVM details = new AEmployeeDetailVM();
                 details.DivisionList = ListDivision();
-
-                AppTalukaVM at = new AppTalukaVM();
-                details.CheckDist = new List<tehsil>();
-                var appid = dbMain.AppDetails.GroupBy(c => c.District).ToList();
-
-                foreach (var a in appid)
-                { 
-                  var  tes = dbMain.tehsils.Where(c=>c.id==a.Key).FirstOrDefault<tehsil>();
-                    if (tes != null)
-                    {
-                    
-                     
-                        details.CheckDist.Add(new tehsil
-                        {
-                            id = tes.id,
-                            name = tes.name,
-                            IsCheked= tes.IsCheked
-                        });
-                    }
-                   
-                }
-
-             
+                //   details.DistrictList = ListSubDivision(0);
+                details.ULBList = GetULBMenus();
                 using (var db = new DevSwachhBharatMainEntities())
                 {
                     var districtDetails = db.state_districts.FirstOrDefault();
@@ -163,21 +142,8 @@ namespace SwachBharat.CMS.Bll.Services
                     {
                         details = FillDivisionViewModel(districtDetails);
                         details.DivisionList = ListDivision();
-                        details.CheckDist = new List<tehsil>();
-                        foreach (var a in appid)
-                        {
-                            var tes = dbMain.tehsils.Where(c => c.id == a.Key).FirstOrDefault<tehsil>();
-                            if (tes != null)
-                            { 
-                                details.CheckDist.Add(new tehsil
-                                {
-                                    id = tes.id,
-                                    name = tes.name,
-                                     IsCheked = tes.IsCheked
-                                });
-                            }
-
-                        }
+                        //    details.DistrictList = ListSubDivision(0);
+                        details.ULBList = GetULBMenus();
 
                         return details;
                     }
@@ -194,6 +160,224 @@ namespace SwachBharat.CMS.Bll.Services
             }
         }
 
+
+        public AEmployeeDetailVM GetAUREmployeeDetails(int teamId)
+        {
+            try
+            {
+                AEmployeeDetailVM details = new AEmployeeDetailVM();
+
+                using (var db = new DevSwachhBharatMainEntities())
+                {
+                    var emp = db.AEmployeeMasters.Where(a => a.EmpId == teamId).FirstOrDefault();
+                    if (emp != null)
+                    {
+                        details = FillAEmployeeViewModel(emp);
+                        details.ULBList = GetULBMenus(teamId);
+
+                        return details;
+                    }
+                    else
+                    {
+                        details.ULBList = GetULBMenus(teamId);
+                        return details;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        public List<MenuItemULB> GetULBMenus1(string loginId = "")
+        {
+
+            List<int> AppList = new List<int>();
+            List<MenuItemULB> menuList = new List<MenuItemULB>();
+            using (DevSwachhBharatMainEntities db = new DevSwachhBharatMainEntities())
+            {
+                var appUser = db.AEmployeeMasters.Where(a => a.LoginId == loginId).FirstOrDefault();
+                if (appUser != null)
+                {
+
+                    AppList = db.AppDetails.Select(a => a.AppId).ToList();
+
+                }
+                else
+                {
+
+
+                }
+
+
+                var appListDivision = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId, (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District })
+                   .GroupBy(c => c.Devision)
+                   .Select(group => group.FirstOrDefault()).ToList();
+                if (appListDivision != null && appListDivision.Count > 0)
+                {
+                    foreach (var appDiv in appListDivision)
+                    {
+
+                        var div = db.state_districts.Where(a => a.id == appDiv.Devision)
+                            .Select(b => new MenuItemULB { divisionId = b.id, districtId = 0, ULBId = 0, LinkText = b.district_name, ActionName = "", ControllerName = "", returnUrl = "", Type = "W" })
+                            .FirstOrDefault();
+                        if (div != null)
+                        {
+                            menuList.Add(div);
+
+                            var appListDistrict = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId, (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District, District = b.Tehsil })
+                            .Where(c => c.Devision == appDiv.Devision)
+                            .GroupBy(c => c.District)
+                            .Select(group => group.FirstOrDefault()).ToList();
+
+                            if (appListDistrict != null && appListDistrict.Count > 0)
+                            {
+                                foreach (var appDist in appListDistrict)
+                                {
+                                    var dist = db.tehsils.Where(a => a.id == appDist.District)
+                                        .Select(b => new MenuItemULB { divisionId = appDiv.Devision, districtId = b.id, ULBId = 0, LinkText = b.name, ActionName = "", ControllerName = "", returnUrl = "", Type = "W" })
+                                        .FirstOrDefault();
+                                    if (dist != null)
+                                    {
+                                        menuList.Add(dist);
+
+                                        var ulb = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId,
+                                                (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District, District = b.Tehsil })
+                                                .Where(c => c.Devision == appDiv.Devision && c.District == appDist.District)
+                                                .Join(db.UserInApps, c => c.AppId, d => d.AppId,
+                                                (c, d) => new { c, d })
+                                                .Join(db.AspNetUsers, e => e.d.UserId, f => f.Id,
+                                                (e, f) => new MenuItemULB { divisionId = e.c.Devision, districtId = e.c.District, ULBId = e.c.AppId, LinkText = e.c.AppName, ActionName = "Login", ControllerName = "Account", returnUrl = f.UserName, Type = "W" }).ToList();
+                                        if (ulb != null && ulb.Count > 0)
+                                        {
+                                            menuList.AddRange(ulb);
+
+                                        }
+
+
+                                    }
+
+
+                                }
+                            }
+
+                        }
+
+
+
+
+                    }
+                }
+
+
+
+            }
+
+
+            return menuList.Select(x => new MenuItemULB { divisionId = x.divisionId, districtId = x.districtId, ULBId = x.ULBId, LinkText = x.LinkText, ActionName = x.ActionName, ControllerName = x.ControllerName, returnUrl = x.returnUrl, Type = x.Type, IsChecked = AppList.Contains(x.ULBId ?? 0) }).ToList();
+        }
+
+        public List<MenuItemDivison> GetULBMenus(int teamId = -1)
+        {
+
+            List<int> AppList = new List<int>();
+            List<MenuItemDivison> menuList = new List<MenuItemDivison>();
+            using (DevSwachhBharatMainEntities db = new DevSwachhBharatMainEntities())
+            {
+                var appUser = db.AEmployeeMasters.Where(a => a.EmpId == teamId).FirstOrDefault();
+                if (appUser != null && !string.IsNullOrEmpty(appUser.isActiveULB))
+                {
+                    AppList = appUser.isActiveULB.Split(',').Select(x => Convert.ToInt32(x)).ToList();
+                }
+                else
+                {
+
+
+                }
+
+
+                var appListDivision = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId, (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District })
+                   .GroupBy(c => c.Devision)
+                   .Select(group => group.FirstOrDefault()).ToList();
+                if (appListDivision != null && appListDivision.Count > 0)
+                {
+                    foreach (var appDiv in appListDivision)
+                    {
+
+                        var div = db.state_districts.Where(a => a.id == appDiv.Devision)
+                            .Select(b => new MenuItemDivison { divisionId = b.id, districtId = 0, ULBId = 0, LinkText = b.district_name, ActionName = "", ControllerName = "", returnUrl = "", Type = "W" })
+                            .FirstOrDefault();
+                        if (div != null)
+                        {
+                            //menuList.Add(div);
+
+                            var appListDistrict = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId, (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District, District = b.Tehsil })
+                            .Where(c => c.Devision == appDiv.Devision)
+                            .GroupBy(c => c.District)
+                            .Select(group => group.FirstOrDefault()).ToList();
+
+                            if (appListDistrict != null && appListDistrict.Count > 0)
+                            {
+                                foreach (var appDist in appListDistrict)
+                                {
+                                    var dist = db.tehsils.Where(a => a.id == appDist.District)
+                                        .Select(b => new MenuItemDistrict { divisionId = appDiv.Devision, districtId = b.id, ULBId = 0, LinkText = b.name, ActionName = "", ControllerName = "", returnUrl = "", Type = "W" })
+                                        .FirstOrDefault();
+                                    if (dist != null)
+                                    {
+                                        //menuList.Add(dist);
+
+                                        var ulb = db.AppConnections.Join(db.AppDetails, a => a.AppId, b => b.AppId,
+                                                (a, b) => new { AppId = a.AppId, AppName = b.AppName, Devision = b.District, District = b.Tehsil })
+                                                .Where(c => c.Devision == appDiv.Devision && c.District == appDist.District)
+                                                .Join(db.UserInApps, c => c.AppId, d => d.AppId,
+                                                (c, d) => new { c, d })
+                                                .Join(db.AspNetUsers, e => e.d.UserId, f => f.Id,
+                                                (e, f) => new MenuItemULB { divisionId = e.c.Devision, districtId = e.c.District, ULBId = e.c.AppId, LinkText = e.c.AppName, ActionName = "Login", ControllerName = "Account", returnUrl = f.UserName, Type = "W" }).ToList();
+                                        if (ulb != null && ulb.Count > 0)
+                                        {
+                                            //menuList.AddRange(ulb);
+                                            var ULBs = ulb.Select(x => new MenuItemULB { divisionId = x.divisionId, districtId = x.districtId, ULBId = x.ULBId, LinkText = x.LinkText, ActionName = x.ActionName, ControllerName = x.ControllerName, returnUrl = x.returnUrl, Type = x.Type, IsChecked = AppList.Contains(x.ULBId ?? 0) }).ToList();
+                                            dist.ULBList.AddRange(ULBs);
+                                        }
+                                        if(ulb.Count == dist.ULBList.Where(u => u.IsChecked).ToList().Count)
+                                        {
+                                            dist.IsChecked = true;
+                                        }
+                                        div.DistrictList.Add(dist);
+
+                                    }
+
+
+                                }
+                            }
+                            if (div.DistrictList.Count == div.DistrictList.Where(d => d.IsChecked).ToList().Count)
+                            {
+                                div.IsChecked = true;
+                            }
+                            menuList.Add(div);
+                        }
+
+
+
+
+                    }
+                }
+
+
+
+            }
+            
+            return menuList;
+        }
+
+
+
+
+
         public AEmployeeDetailVM GetDistrict(int id)
         {
             try
@@ -201,7 +385,7 @@ namespace SwachBharat.CMS.Bll.Services
                 AEmployeeDetailVM details = new AEmployeeDetailVM();
 
                 details.CheckDist = new List<tehsil>();
-                var appid = dbMain.AppDetails.Where(c=>c.District==id).GroupBy(c => c.District).ToList();
+                var appid = dbMain.AppDetails.Where(c => c.District == id).GroupBy(c => c.District).ToList();
 
                 foreach (var a in appid)
                 {
@@ -226,7 +410,7 @@ namespace SwachBharat.CMS.Bll.Services
                     {
                         details = FillDivisionViewModel(districtDetails);
                         details.CheckDist = new List<tehsil>();
-                   
+
                         foreach (var a in appid)
                         {
                             var tes = dbMain.tehsils.Where(c => c.id == a.Key).FirstOrDefault<tehsil>();
@@ -282,14 +466,15 @@ namespace SwachBharat.CMS.Bll.Services
                             model.lastModifyDateEntry = DateTime.Now;
                             model.DivisionId = data.DivisionId;
                             model.DistictId = data.DistictId;
-                        
+                            model.type = data.type;
+                            model.isActiveULB = GetAciveULB(data.ULBList);
                             db.SaveChanges();
                         }
                     }
                     else
                     {
                         var type = FillUREmployeeDataModel(data);
-
+                        type.isActiveULB = GetAciveULB(data.ULBList);
                         db.AEmployeeMasters.Add(type);
                         db.SaveChanges();
                     }
@@ -300,7 +485,39 @@ namespace SwachBharat.CMS.Bll.Services
                 throw;
             }
         }
+        public string GetAciveULB(List<MenuItemDivison> ULBList)
+        {
+            List<int> AppList = new List<int>();
+            string strActiveULB = string.Empty;
+            int AppId;
+            foreach (MenuItemDivison div in ULBList)
+            {
+                foreach (MenuItemDistrict dist in div.DistrictList)
+                {
+                    foreach (MenuItemULB ulb in dist.ULBList)
+                    {
+                        if (ulb.IsChecked == true)
+                        {
+                            AppId = ulb.ULBId ?? 0;
+                            if (AppId != 0)
+                            {
+                                AppList.Add(AppId);
+                            }
 
+                        }
+                    }
+
+                }
+
+
+            }
+            if (AppList.Count > 0)
+            {
+                strActiveULB = string.Join(",", AppList);
+            }
+
+            return strActiveULB;
+        }
         private AEmployeeMaster FillUREmployeeDataModel(AEmployeeDetailVM data)
         {
             AEmployeeMaster model = new AEmployeeMaster();
@@ -315,6 +532,7 @@ namespace SwachBharat.CMS.Bll.Services
             model.lastModifyDateEntry = DateTime.Now;
             model.DivisionId = data.DivisionId;
             model.DistictId = data.DistictId;
+            model.type = data.type;
             return model;
         }
 
@@ -375,15 +593,15 @@ namespace SwachBharat.CMS.Bll.Services
         #endregion
 
         #region Taluka Service
-        public AppTalukaVM GetTalukaById(int teamId,string name)
+        public AppTalukaVM GetTalukaById(int teamId, string name)
         {
             try
             {
                 AppTalukaVM details = new AppTalukaVM();
-               
+
                 using (var db = new DevSwachhBharatMainEntities())
                 {
-                    var talukaDetails = db.tehsils.Where(x => x.id == teamId ||x.name==name).FirstOrDefault();
+                    var talukaDetails = db.tehsils.Where(x => x.id == teamId || x.name == name).FirstOrDefault();
                     if (talukaDetails != null)
                     {
                         details = FillTalukaViewModel(talukaDetails);
@@ -478,7 +696,7 @@ namespace SwachBharat.CMS.Bll.Services
                 return null;
             }
 
-       }
+        }
         public string GetDatabaseFromAppID(int AppId)
         {
             var DB_Name = dbMain.AppConnections.Where(x => x.AppId == AppId).FirstOrDefault().InitialCatalog;
@@ -516,40 +734,40 @@ namespace SwachBharat.CMS.Bll.Services
         {
             List<AppDetail> appNames = new List<AppDetail>();
             appNames = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika" && x.AppId != 3088 && x.AppId != 3094).OrderBy(x => x.AppName).ToList(); //Live AppID=3088 for Thane ULB  & 3094 For Employee ULB
-            //appNames = dbMain.AppDetails.ToList();
-              //var appNames= dbMain.AppDetails.Where(row => row.)
-            return appNames.OrderBy(x =>x.AppName).ToList();
+                                                                                                                                                                                         //appNames = dbMain.AppDetails.ToList();
+                                                                                                                                                                                         //var appNames= dbMain.AppDetails.Where(row => row.)
+            return appNames.OrderBy(x => x.AppName).ToList();
         }
 
 
         public List<AppDetail> GetURAppName(string utype, string LoginId, string Password)
         {
             List<AppDetail> appNames = new List<AppDetail>();
-            if (utype=="A")
-            { 
-            appNames = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika").OrderBy(x => x.AppName).ToList();
+            if (utype == "A")
+            {
+                appNames = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika").OrderBy(x => x.AppName).ToList();
             }
             else
             {
-                var ULBList = dbMain.EmployeeMasters.Where(x=>x.LoginId==LoginId && x.Password==Password).FirstOrDefault();          
-                    string s = ULBList.isActiveULB;
-                    string[] values = s.Split(',');
-                    for (int i = 0; i < values.Length; i++)
+                var ULBList = dbMain.EmployeeMasters.Where(x => x.LoginId == LoginId && x.Password == Password).FirstOrDefault();
+                string s = ULBList.isActiveULB;
+                string[] values = s.Split(',');
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = values[i].Trim();
+                    int u = 0;
+                    if (values[i] != "")
                     {
-                        values[i] = values[i].Trim();
-                        int u = 0;
-                        if (values[i] != "")
-                        {
                         u = Convert.ToInt32(values[i]);
                         var details = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika" && x.AppId == u).OrderBy(x => x.AppName).FirstOrDefault();
                         appNames.Add(details);
                     }
-               
-                   
+
+
                 }
 
-              
-               
+
+
             }
             return appNames.OrderBy(x => x.AppName).ToList();
         }
@@ -557,7 +775,7 @@ namespace SwachBharat.CMS.Bll.Services
         public string GetLoginid(string LoginId)
         {
             var isrecord = dbMain.EmployeeMasters.Where(x => x.LoginId == LoginId && x.isActive == true).FirstOrDefault();
-            if(isrecord==null)
+            if (isrecord == null)
             {
                 return "0";
             }
@@ -565,7 +783,7 @@ namespace SwachBharat.CMS.Bll.Services
             {
                 return "1";
             }
-           
+
         }
 
         #endregion
@@ -629,45 +847,45 @@ namespace SwachBharat.CMS.Bll.Services
         #region ViewModel 
         private AppDetailsVM FillAppDetailsVMViewModel(AppDetail data)
         {
-          
-                AppDetailsVM model = new AppDetailsVM();
-                model.AboutAppynity = data.AboutAppynity;
-                model.AboutTeamDetail = data.AboutTeamDetail;
-                model.AboutThumbnailURL = data.AboutThumbnailURL;
-                model.Android_GCM_pushNotification_Key = data.Android_GCM_pushNotification_Key;
-                model.AppId = data.AppId;
-                model.AppName = data.AppName;
-                model.AppName_mar = data.AppName_mar;
-                model.baseImageUrl = data.baseImageUrl;
-                model.baseImageUrlCMS = data.baseImageUrlCMS;
-                model.ContactUsTeamMember = data.ContactUsTeamMember;
-                model.EmailId = data.EmailId;
-                model.ContactUs = data.ContactUs;
-                model.website = data.website;
-                model.basePath = data.basePath;
-                model.Type = data.Type;
-                model.Logo = data.Logo;
-                model.Logitude = data.Logitude;
-                model.Latitude = data.Latitude;
-                model.Collection = data.Collection;
-                model.UserProfile = data.UserProfile;
-                model.HousePDF = data.HousePDF;
-                model.HouseQRCode = data.HouseQRCode;
-                model.PointPDF = data.PointPDF;
-                model.PointQRCode = data.PointQRCode;
-                model.Grampanchayat_Pro = data.Grampanchayat_Pro;
-                model.DumpYardQRCode = data.DumpYardQRCode;
-                model.DumpYardPDF = data.DumpYardPDF;
-                model.ReportEnable = data.ReportEnable;
-                model.YoccClientID = data.YoccClientID;
-                model.yoccContact = data.yoccContact;
-                model.GramPanchyatAppID = data.GramPanchyatAppID;
-                model.YoccFeddbackLink = data.YoccFeddbackLink;
-                model.YoccDndLink = data.YoccDndLink;
-                model.LiquidQRCode = data.LiquidQRCode;
-                model.StreetQRCode = data.StreetQRCode;
-               return model;
-        
+
+            AppDetailsVM model = new AppDetailsVM();
+            model.AboutAppynity = data.AboutAppynity;
+            model.AboutTeamDetail = data.AboutTeamDetail;
+            model.AboutThumbnailURL = data.AboutThumbnailURL;
+            model.Android_GCM_pushNotification_Key = data.Android_GCM_pushNotification_Key;
+            model.AppId = data.AppId;
+            model.AppName = data.AppName;
+            model.AppName_mar = data.AppName_mar;
+            model.baseImageUrl = data.baseImageUrl;
+            model.baseImageUrlCMS = data.baseImageUrlCMS;
+            model.ContactUsTeamMember = data.ContactUsTeamMember;
+            model.EmailId = data.EmailId;
+            model.ContactUs = data.ContactUs;
+            model.website = data.website;
+            model.basePath = data.basePath;
+            model.Type = data.Type;
+            model.Logo = data.Logo;
+            model.Logitude = data.Logitude;
+            model.Latitude = data.Latitude;
+            model.Collection = data.Collection;
+            model.UserProfile = data.UserProfile;
+            model.HousePDF = data.HousePDF;
+            model.HouseQRCode = data.HouseQRCode;
+            model.PointPDF = data.PointPDF;
+            model.PointQRCode = data.PointQRCode;
+            model.Grampanchayat_Pro = data.Grampanchayat_Pro;
+            model.DumpYardQRCode = data.DumpYardQRCode;
+            model.DumpYardPDF = data.DumpYardPDF;
+            model.ReportEnable = data.ReportEnable;
+            model.YoccClientID = data.YoccClientID;
+            model.yoccContact = data.yoccContact;
+            model.GramPanchyatAppID = data.GramPanchyatAppID;
+            model.YoccFeddbackLink = data.YoccFeddbackLink;
+            model.YoccDndLink = data.YoccDndLink;
+            model.LiquidQRCode = data.LiquidQRCode;
+            model.StreetQRCode = data.StreetQRCode;
+            return model;
+
         }
         private AppStateVM FillStatesViewModel(country_states data)
         {
@@ -681,9 +899,27 @@ namespace SwachBharat.CMS.Bll.Services
         private AEmployeeDetailVM FillDivisionViewModel(state_districts data)
         {
             AEmployeeDetailVM model = new AEmployeeDetailVM();
-            model.DivisionName = data.district_name;    
+            model.DivisionName = data.district_name;
             model.DivisionId = data.id;
-          
+
+            return model;
+        }
+        private AEmployeeDetailVM FillAEmployeeViewModel(AEmployeeMaster data)
+        {
+            AEmployeeDetailVM model = new AEmployeeDetailVM();
+            model.qrEmpId = data.EmpId;
+            model.qrEmpName = data.EmpName;
+            model.qrEmpNameMar = data.EmpNameMar;
+            model.qrEmpPassword = data.Password;
+            model.qrEmpLoginId = data.LoginId;
+            model.qrEmpMobileNumber = data.EmpMobileNumber;
+            model.qrEmpAddress = data.EmpAddress;
+            model.type = data.type;
+            model.isActive = data.isActive;
+            model.StateId = data.StateId ?? 0;
+            model.DivisionId = data.DivisionId ?? 0;
+            model.DistictId = data.DistictId ?? 0;
+            model.lastModifyDate = data.lastModifyDateEntry;
             return model;
         }
 
@@ -765,10 +1001,10 @@ namespace SwachBharat.CMS.Bll.Services
                 State = dbMain.state_districts.Join(dbMain.AppDetails, a => a.id, b => b.District, (a, b) => new { id = a.id, district_name = a.district_name, district_name_mar = a.district_name_mar })
                  .GroupBy(c => c.id)
                  .Select(group => group.FirstOrDefault()).ToList()
-             
+
                     .Select(x => new SelectListItem
                     {
-                        Text = x.district_name + '(' + x.district_name_mar+ ')',
+                        Text = x.district_name + '(' + x.district_name_mar + ')',
                         Value = x.id.ToString()
                     }).OrderBy(t => t.Text).ToList();
                 State.Insert(0, itemAdd);
@@ -785,17 +1021,30 @@ namespace SwachBharat.CMS.Bll.Services
         //    AEmployeeDetailVM TypeDetail = new AEmployeeDetailVM();
         //    try
         //    {
-              
-              
 
-        //           // TypeDetail.CheckDist = dbMain.tehsils.Where(x => x.district == disid).ToList<tehsil>();
-        //          TypeDetail.CheckDist = dbMain.tehsils.ToList<tehsil>();
-        //            //  TypeDetail.CheckDist = dbMain.tehsils.Join(dbMain.AppDetails, a => a.id, b => b.Tehsil, (a, b) => new { id = a.id, name = a.name, name_mar = a.name_mar, Districts = b.District }).ToList<tehsil>();
-        //            // TypeDetail.CheckDist = dbMain.tehsils.Join(dbMain.AppDetails, a => a.id, b => b.Tehsil, (a, b) => new { id = a.id, name = a.name, name_mar = a.name_mar, Districts = b.District }).Where(x => x.Districts == disid).GroupBy(c => c.id).ToList<tehsil>();
 
-              
+
+        //            .Select(x => new SelectListItem
+        //            {
+        //                Text = x.name + '(' + x.name_mar + ')',
+        //                Value = x.id.ToString()
+        //            }).OrderBy(t => t.Text).ToList();
+
         //    }
-        //    catch (Exception ex) { throw ex; }
+        //    else
+        //    {
+        //        State = dbMain.tehsils.Join(dbMain.AppDetails, a => a.id, b => b.Tehsil, (a, b) => new { id = a.id, name = a.name, name_mar = a.name_mar, Districts = b.District }).GroupBy(c => c.id)
+        //        .Select(group => group.FirstOrDefault()).ToList()
+
+        //                                .Select(x => new SelectListItem
+        //                                {
+        //                                    Text = x.name + '(' + x.name_mar + ')',
+        //                                    Value = x.id.ToString()
+        //                                }).OrderBy(t => t.Text).ToList();
+        //    }
+        //    State.Insert(0, itemAdd);
+        //}
+        //catch (Exception ex) { throw ex; }
 
         //    return TypeDetail;
         //}
@@ -951,18 +1200,18 @@ namespace SwachBharat.CMS.Bll.Services
                     if (values[i] != "")
                     {
                         u = Convert.ToInt32(values[i]);
-                        var detail = dbMain.AppDetails.Where(x => x.AppName != "Thane Mahanagar Palika" && x.AppId == u).FirstOrDefault();
-                        if(detail.IsActive == true)
+                        var detail = dbMain.AppDetails.Where(x => x.AppId == u).FirstOrDefault();
+                        if (detail.IsActive == true)
                         {
                             var details = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika" && x.AppId == u).OrderBy(x => x.AppName).FirstOrDefault();
                             appList.Add(details);
                         }
-                        
+
                     }
 
 
                 }
-              
+
             }
             return appList.OrderBy(x => x.AppName).ToList();
         }
@@ -997,7 +1246,7 @@ namespace SwachBharat.CMS.Bll.Services
                     type.Image = "/Images/add_image_square.png";
                     return type;
                 }
-               
+
             }
             catch (Exception)
             {
