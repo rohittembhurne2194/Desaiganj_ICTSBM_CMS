@@ -1,7 +1,16 @@
 ﻿$(document).ready(function () {
     var UserId = $('#selectnumber').val();
-    
-   
+    $('#Segid').change(function () {
+        debugger;
+        Segid = $('#Segid').val();
+        if (Segid == 1) {
+            $('#stype').show();
+        } else {
+            SegidSub = $('#SegidSub').val('');
+            $('#stype').hide();
+        }
+    });
+
 
 
 
@@ -36,104 +45,130 @@
         },
 
         "columnDefs":
-        [{
-            "targets": [0],
-            "visible": false,
-            "searchable": false
-        },
-         {
-            "targets": [12],
-            "visible": false,
-            "searchable": false
-        },
-         {
-             "targets": [8],
-             "visible": true,
+            [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [12],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [8],
+                "visible": true,
 
-             "render": function (data, type, full, meta) {
-                 if (full["gpBeforImage"] != null) {
-                     return "<div style='cursor:pointer;display:inline-flex;'  onclick=PopImages(this)><img alt='Photo Not Found'  src='" + data +
-                 "' style='height:35px;width:35px;cursor:pointer;margin-left:0px;'></img><span><ul class='dt_pop'  style='margin:2px -5px -5px -5px; padding:0px;list-style:none;display:none;'><li  class='li_date datediv' >" + full["attandDate"] + "</li><li class='addr-length' style='margin:0px 0px 0px 10px;'>"
-                 + full["Address"] + "</li><li style='display:none' class='li_title' >Before Image </li></ul></span></div>";
-                 }
-                 else {
+                "render": function (data, type, full, meta) {
+                    if (full["gpBeforImage"] != null) {
+                        return "<div style='cursor:pointer;display:inline-flex;'  onclick=PopImages(this)><img alt='Photo Not Found'  src='" + data +
+                            "' style='height:35px;width:35px;cursor:pointer;margin-left:0px;'></img><span><ul class='dt_pop'  style='margin:2px -5px -5px -5px; padding:0px;list-style:none;display:none;'><li  class='li_date datediv' >" + full["attandDate"] + "</li><li class='addr-length' style='margin:0px 0px 0px 10px;'>"
+                            + full["Address"] + "</li><li style='display:none' class='li_title' >Before Image </li></ul></span></div>";
+                    }
+                    else {
 
-                     return "<img alt='Photo Not Found' onclick='noImageNotification()' src='/Images/default.png' style='height:35px;width:35px;cursor:pointer;'></img>";
-                 }
-             },
-         },
-             {
-                 "targets": [9],
-                 "visible": true,
+                        return "<img alt='Photo Not Found' onclick='noImageNotification()' src='/Images/default.png' style='height:35px;width:35px;cursor:pointer;'></img>";
+                    }
+                },
+            },
+            {
+                "targets": [9],
+                "visible": true,
 
-                 "render": function (data, type, full, meta) {
-                     if (full["gpAfterImage"] != null) {
-                         return "<div style='cursor:pointer;display:inline-flex;'  onclick=PopImages(this)><img alt='Photo Not Found'  src='" + data +
-                     "' style='height:35px;width:35px;cursor:pointer;margin-left:0px;'></img><span><ul class='dt_pop'  style='margin:2px -5px -5px -5px; padding:0px;list-style:none;display:none;'><li  class='li_date datediv' >" + full["attandDate"] + "</li><li class='addr-length' style='margin:0px 0px 0px 10px;'>"
-                     + full["Address"] + "</li><li style='display:none' class='li_title' >After Image </li></ul></span></div>";
-                     }
-                     else {
+                "render": function (data, type, full, meta) {
+                    if (full["gpAfterImage"] != null) {
+                        return "<div style='cursor:pointer;display:inline-flex;'  onclick=PopImages(this)><img alt='Photo Not Found'  src='" + data +
+                            "' style='height:35px;width:35px;cursor:pointer;margin-left:0px;'></img><span><ul class='dt_pop'  style='margin:2px -5px -5px -5px; padding:0px;list-style:none;display:none;'><li  class='li_date datediv' >" + full["attandDate"] + "</li><li class='addr-length' style='margin:0px 0px 0px 10px;'>"
+                            + full["Address"] + "</li><li style='display:none' class='li_title' >After Image </li></ul></span></div>";
+                    }
+                    else {
 
-                         return "<img alt='Photo Not Found' onclick='noImageNotification()' src='/Images/default.png' style='height:35px;width:35px;cursor:pointer;'></img>";
-                     }
-                 },
-             },
+                        return "<img alt='Photo Not Found' onclick='noImageNotification()' src='/Images/default.png' style='height:35px;width:35px;cursor:pointer;'></img>";
+                    }
+                },
+            },
 
 
-              {
-                  "targets": [3],
-                
-                  "visible":true,
+                {
+                    "targets": [3],
 
-                  "render": function (data, type, full, meta) {
+                    "visible": true,
 
-                            if(full["wastetype"] == "DW1") {
-                               return "<div class='circle' style='height: 20px;width: 20px;background-color: #0462EA;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Dry Waste)";
+                    "render": function (data, type, full, meta) {
 
-    }
-                     else if (full["wastetype"] == "WW1") {
-                               return "<div class='circle' style='height: 20px;width: 20px;background-color: #186634;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Wet Waste)";
 
-    }
 
-                           else  if (full["type1"] == "0") {
-                         return "<div class='circle' style='height: 20px;width: 20px;background-color: #f44336;border-radius: 50%;    vertical-align: middle;display: inline-flex;'></div> (Mixed Garbage)";
-                     }
-                     else if (full["type1"] == "1") {
-                         return "<div class='circle' style='height: 20px;width: 20px;background-color: #388e3c;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Segregated Garbage)";
+                        if (full["type1"] == "0") {
+                            return "<div class='circle' style='height: 20px;width: 20px;background-color: #f44336;border-radius: 50%;    vertical-align: middle;display: inline-flex;'></div> (Mixed Garbage)";
+                        }
+                        else if (full["type1"] == "1") {
+                            if (full["wet"] == 1) {
+                                var Wet = "Wet"
+                            }
+                            else {
+                                var Wet = ""
+                            }
+                            if (full["dry"] == 1) {
+                                var Dry = "Dry"
+                            }
+                            else {
+                                var Dry = ""
+                            }
+                            if (full["sanitary"] == 1) {
+                                var Sanitary = "Sanitary"
+                            }
+                            else {
+                                var Sanitary = ""
+                            }
+                            if (full["domestic"] == 1) {
+                                var Domestic = "Domestic Hazardous Waste"
+                            }
+                            else {
+                                var Domestic = ""
+                            }
+                            if (Wet.length > 0 && (Dry.length > 0 || Sanitary.length > 0 || Domestic.length > 0)) {
+                                var Wet = "Wet |"
+                            }
+                            if (Dry.length > 0 && (Sanitary.length > 0 || Domestic.length > 0)) {
+                                var Dry = "Dry |"
+                            }
+                            if (Sanitary.length > 0 && Domestic.length > 0) {
+                                var Sanitary = "Sanitary |"
+                            }
+                            var details = " " + Wet + " " + Dry + " " + Sanitary + " " + Domestic + " ";
 
-                     }
-                     else if (full["type1"] == "2") {
-                         return "<div class='circle' style='height: 20px;width: 20px;background-color: #fe9436;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Garbage not Received)";
-                        
-                     }
+                            return "<div class='circle' style='height: 20px;width: 20px;background-color: #388e3c;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> Segregated Garbage (" + details + ")";
 
-                 
+                        }
+                        else if (full["type1"] == "2") {
+                            return "<div class='circle' style='height: 20px;width: 20px;background-color: #fe9436;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Garbage Not Received)";
 
-                     else   {
-                         return "<div class='circle' style='height: 20px;width: 20px;background-color: #0086c3;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Garbage type not specified)";
+                        }
 
-                     }
-                   
-                 },
-             },
-        ],
+                    else {
+                        return "<div class='circle' style='height: 20px;width: 20px;background-color: #0086c3;border-radius: 50%;vertical-align: middle;display: inline-flex;'></div> (Garbage Type Not Specified)";
+
+                    }
+
+                },
+            },
+            ],
 
         "columns": [
-              { "data": "Id", "name": "Id", "autoWidth": false },
-              { "data": "attandDate", "name": "attandDate", "autoWidth": false },
-              { "data": "Employee", "name": "Employee", "autoWidth": false }, 
+            { "data": "Id", "name": "Id", "autoWidth": false },
+            { "data": "attandDate", "name": "attandDate", "autoWidth": false },
+            { "data": "Employee", "name": "Employee", "autoWidth": false },
             { "data": "type1", "name": "type1", "autoWidth": false },
-              { "data": "UserName", "name": "UserName", "autoWidth": false },
-              { "data": "Address", "name": "Address", "autoWidth": false }, 
-              { "data": "VehicleNumber", "autoWidth": false },
-              { "data": "Note", "autoWidth": false },
-              { "data": "gpBeforImage", "name": "gpBeforImage", "autoWidth": false },
-               { "data": "gpAfterImage", "name": "gpAfterImage", "autoWidth": false },
-               { "data": "ReferanceId", "name": "ReferanceId", "autoWidth": false },
-                 { "data": "batteryStatus", "name": "batteryStatus", "autoWidth": false },
+            { "data": "UserName", "name": "UserName", "autoWidth": false },
+            { "data": "Address", "name": "Address", "autoWidth": false },
+            { "data": "VehicleNumber", "autoWidth": false },
+            { "data": "Note", "autoWidth": false },
+            { "data": "gpBeforImage", "name": "gpBeforImage", "autoWidth": false },
+            { "data": "gpAfterImage", "name": "gpAfterImage", "autoWidth": false },
+            { "data": "ReferanceId", "name": "ReferanceId", "autoWidth": false },
+            { "data": "batteryStatus", "name": "batteryStatus", "autoWidth": false },
             { "data": "gcDate", "name": "gcDate", "autoWidth": false },
-            
+
 
         ]
     });
@@ -186,11 +221,16 @@ function Search() {
     ZoneId = $('#ZoneId').val();
     WardId = $('#WardNo').val();
     AreaId = $('#AreaId').val();
+
+    Segid = $('#Segid').val();
+
+    SegidSub = $('#SegidSub').val();
+
     Client = " ";
     NesEvent = " ";
     var Product = "";
     var catProduct = "";
-    var value = txt_fdate + "," + txt_tdate + "," + UserId + "," + $("#s").val() + "," + ZoneId + "," + WardId + "," + AreaId;//txt_fdate + "," + txt_tdate + "," + UserId + "," + Client + "," + NesEvent + "," + Product + "," + catProduct + "," + 1;
+    var value = txt_fdate + "," + txt_tdate + "," + UserId + "," + $("#s").val() + "," + ZoneId + "," + WardId + "," + AreaId + "," + Segid + "," + SegidSub;//txt_fdate + "," + txt_tdate + "," + UserId + "," + Client + "," + NesEvent + "," + Product + "," + catProduct + "," + 1;
     // alert(value );
     oTable = $('#demoGrid').DataTable();
     oTable.search(value).draw();

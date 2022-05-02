@@ -602,6 +602,9 @@
                                     else if (data.WasteType == "2") {
                                         col = '|fe9436|000000'
                                     }
+                                    else if (data.WasteType == "-1") {
+                                        col = '|0086c3|000000'
+                                    }
                                 })(marker, data);
 
                                 if (data.DyId != null) {
@@ -809,10 +812,31 @@
                                         data.WasteType = "Mixed Garbage"
                                     }
                                     else if (data.WasteType == "1") {
-                                        data.WasteType = "Segregated Garbage"
+                                        //data.WasteType = "Segregated Garbage" 
+
+                                        if (data.wet == "1") { var wet = "Wet" } else { var wet = "" }
+                                        if (data.dry == "1") { var dry = "Dry" } else { var dry = "" }
+                                        if (data.sanitary == "1") { var sanitary = "Sanitary" } else { var sanitary = "" }
+                                        if (data.domestic == "1") { var domestic = "Domestic" } else { var domestic = "" }
+
+                                        if (wet.length > 0 && (dry.length > 0 || sanitary.length > 0 || domestic.length > 0)) {
+                                            var wet = "Wet |"
+                                        }
+                                        if (dry.length > 0 && (sanitary.length > 0 || domestic.length > 0)) {
+                                            var dry = "Dry |"
+                                        }
+                                        if (sanitary.length > 0 && domestic.length > 0) {
+                                            var sanitary = "Sanitary |"
+                                        }
+                                        var details = " " + wet + " " + dry + " " + sanitary + " " + domestic + " ";
+
+                                        data.WasteType = "Segregated Garbage" + "(" + details + ")"
                                     }
                                     else if (data.WasteType == "2") {
                                         data.WasteType = "Garbage not Received"
+                                    }
+                                    else if (data.WasteType == "-1") {
+                                        data.WasteType = "Garbage Not Specified"
                                     }
                                     if (data.gpBeforImage == null || data.gpBeforImage == "") {
                                         data.gpBeforImage = "/Images/default_not_upload.png"

@@ -297,7 +297,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
         //        return Redirect("/Account/Login");
         //}
 
-        public ActionResult HouseLocationList(string date, string userid, string areaId, string wardNo, string SearchString,string garbageType,string filterType)
+        public ActionResult HouseLocationList(string date, string userid, string areaId, string wardNo, string SearchString,string garbageType,string filterType, string ctype, int SegType)
         {
             if (SessionHandler.Current.AppId != 0)
             {
@@ -328,7 +328,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
                 else {
                     ward = Convert.ToInt32(wardNo);
                 }
-                if (garbageType == "-1" || garbageType == null)
+                if (garbageType == "-2" || garbageType == null)
                 {
                     GarbageType = null;
                 }
@@ -348,7 +348,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
                 }
 
                 List<SBALHouseLocationMapView> obj = new List<SBALHouseLocationMapView>();
-                obj = childRepository.GetAllHouseLocation(date, user, area, ward, SearchString, GarbageType, FilterType,null);
+                obj = childRepository.GetAllHouseLocation(date, user, area, ward, SearchString, GarbageType, FilterType,null, ctype, SegType);
                 // return Json(obj);
                 //if (houseid != null && houseid != "null" && houseid != "-1")
                 //{
