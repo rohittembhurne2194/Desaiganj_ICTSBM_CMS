@@ -115,6 +115,12 @@ namespace SwachBharat.CMS.Bll.Services
                         model.TotalHousePropertyCount = Convert.ToInt32(houseCount.TotalHousePropertyCount);
                         model.TotalDumpPropertyCount = Convert.ToInt32(houseCount.TotalDumpPropertyCount);
 
+
+                        model.TotalWetWaste = Convert.ToInt32(houseCount.TotalWetWaste);
+                        model.TotalDryWaste = Convert.ToInt32(houseCount.TotalDryWaste);
+                        model.TotalDHWCount = Convert.ToInt32(houseCount.TotalDHW);
+                        model.TotalSWCount = Convert.ToInt32(houseCount.TotalSW);
+
                         //For Liquid Waste
 
                         model.LWGcWeightCount = Convert.ToDouble(houseCount.LWGcWeightCount);
@@ -1924,6 +1930,10 @@ namespace SwachBharat.CMS.Bll.Services
                                         HouseOwnerName = house.houseOwner,
                                         OwnerMobileNo = house.houseOwnerMobile,
                                         WasteType = d.garbageType.ToString(),
+                                        wet = d.Wet.ToString(),
+                                        dry = d.Dry.ToString(),
+                                        sanitary = d.Sanitary.ToString(),
+                                        domestic = d.Domestic.ToString(),
                                         gpBeforImage = d.gpBeforImage,
                                         gpAfterImage = d.gpAfterImage,
                                         ZoneList = ListZone(),
@@ -1953,6 +1963,10 @@ namespace SwachBharat.CMS.Bll.Services
                                     HouseOwnerName = house.houseOwner,
                                     OwnerMobileNo = house.houseOwnerMobile,
                                     WasteType = d.garbageType.ToString(),
+                                    wet = d.Wet.ToString(),
+                                    dry = d.Dry.ToString(),
+                                    sanitary = d.Sanitary.ToString(),
+                                    domestic = d.Domestic.ToString(),
                                     gpBeforImage = d.gpBeforImage,
                                     gpAfterImage = d.gpAfterImage,
                                     ZoneList = ListZone(),
@@ -2431,7 +2445,7 @@ namespace SwachBharat.CMS.Bll.Services
 
         // Added By Saurabh (06 June 2019)
 
-        public List<SBALHouseLocationMapView> GetAllHouseLocation(string date, int userid, int areaid, int wardNo, string SearchString, int? GarbageType, int FilterType, string Emptype)
+        public List<SBALHouseLocationMapView> GetAllHouseLocation(string date, int userid, int areaid, int wardNo, string SearchString, int? GarbageType, int FilterType, string Emptype, string ctype, int SegType)
         {
            
                 List<SBALHouseLocationMapView> houseLocation = new List<SBALHouseLocationMapView>();
@@ -2439,7 +2453,7 @@ namespace SwachBharat.CMS.Bll.Services
                 DateTime dt1 = DateTime.ParseExact(date, "d/M/yyyy", CultureInfo.InvariantCulture);
                 if (Emptype == null)
                 {
-                    var data = db.SP_HouseOnMapDetails(Convert.ToDateTime(dt1), userid == -1 ? 0 : userid, zoneId, areaid, wardNo, GarbageType, FilterType).ToList();
+                    var data = db.SP_HouseOnMapDetails(Convert.ToDateTime(dt1), userid == -1 ? 0 : userid, zoneId, areaid, wardNo, GarbageType, FilterType, SegType).ToList();
                     foreach (var x in data)
                     {
 
@@ -2468,6 +2482,10 @@ namespace SwachBharat.CMS.Bll.Services
                             //vehcileNumber = x.v,
                             //userMobile = x.mobile,
                             garbageType = x.garbageType,
+                            wet = x.Wet,
+                            dry = x.Dry,
+                            domestic = x.Domestic,
+                            sanitary = x.Sanitary
                         });
                     }
                     if (!string.IsNullOrEmpty(SearchString))
@@ -2583,7 +2601,7 @@ namespace SwachBharat.CMS.Bll.Services
 
             else
                 {
-                    var data = db.SP_HouseOnMapDetails(Convert.ToDateTime(dt1), userid == -1 ? 0 : userid, zoneId, areaid, wardNo, GarbageType, FilterType).ToList();
+                    var data = db.SP_HouseOnMapDetails(Convert.ToDateTime(dt1), userid == -1 ? 0 : userid, zoneId, areaid, wardNo, GarbageType, FilterType, SegType).ToList();
                     foreach (var x in data)
                     {
 

@@ -25,6 +25,12 @@ namespace SwachBharat.CMS.Dal.DataContexts
         public string note { get; set; }
         public string batteryStatus { get; set; }
         public string WasteType { get; set; }
+        public string los { get; set; }
+        public Nullable<int> gcType { get; set; }
+        public Nullable<int> Wet { get; set; }
+        public Nullable<int> Dry { get; set; }
+        public Nullable<int> Domestic { get; set; }
+        public Nullable<int> Sanitary { get; set; }
         public string gpBeforImage { get; set; }
         public string gpAfterImage { get; set; }
         public Nullable<int> garbageType { get; set; }
