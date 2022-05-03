@@ -167,6 +167,23 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
                             else param3 = null;
                         }
 
+                        if (arr.Length > 7)
+                        {
+                            if (arr[7].ToString() != null && arr[7].ToString() != "null" && arr[7] != " " && arr[7].ToString() != string.Empty)
+                            {
+                                param4 = Convert.ToInt32(arr[7]);
+                            }
+                            else param4 = null;
+                        }
+                        if (arr.Length > 8)
+                        {
+                            if (arr[8].ToString() != null && arr[8].ToString() != "null" && arr[8] != " " && arr[8].ToString() != string.Empty)
+                            {
+                                param5 = Convert.ToInt32(arr[8]);
+                            }
+                            else param5 = null;
+                        }
+
                         //if (arr[3].ToString() != null && arr[3] != " ")
                         //{ clientId = arr[3]; }
                         //else clientId = null;
@@ -194,6 +211,8 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
                         param1 = null;
                         param2 = null;
                         param3 = null;
+                        param4 = null;
+                        param5 = null;
                         // searchString = "";
                     }
                 }
@@ -290,7 +309,7 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
                     return gridRepository;
                     break;
                 case "GarbageHouse":
-                    gridRepository = new HGarbageCotectionGridRepository(0, searchString, fdate, tdate, userId, appId, param1, param2, param3);
+                    gridRepository = new HGarbageCotectionGridRepository(0, searchString, fdate, tdate, userId, appId, param1, param2, param3, param4, param5);
                     return gridRepository;
                     break;
 

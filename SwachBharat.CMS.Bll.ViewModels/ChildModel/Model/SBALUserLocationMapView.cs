@@ -30,6 +30,12 @@ namespace SwachBharat.CMS.Bll.ViewModels.ChildModel.Model
 
 
         public string WasteType { get; set; }
+
+        public string wet { get; set; }
+        public string dry { get; set; }
+        public string sanitary { get; set; }
+        public string domestic { get; set; }
+
         public string gpBeforImage { get; set; }
         public string gpAfterImage{ get; set; }
         public string DryWaste { get; set; }

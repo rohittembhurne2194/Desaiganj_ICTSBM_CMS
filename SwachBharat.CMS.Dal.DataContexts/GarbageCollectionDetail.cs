@@ -46,5 +46,11 @@ namespace SwachBharat.CMS.Dal.DataContexts
         public string EmployeeType { get; set; }
         public Nullable<int> LWId { get; set; }
         public Nullable<int> SSId { get; set; }
+        public Nullable<int> AreaId { get; set; }
+        public string LOS { get; set; }
+        public Nullable<int> Wet { get; set; }
+        public Nullable<int> Dry { get; set; }
+        public Nullable<int> Sanitary { get; set; }
+        public Nullable<int> Domestic { get; set; }
     }
 }

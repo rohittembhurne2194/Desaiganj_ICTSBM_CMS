@@ -32,6 +32,11 @@ namespace SwachBharat.CMS.Bll.ViewModels.ChildModel.Model
         public string gcTime { get; set; }
         public Nullable<int> garbageType { get; set; }
 
+        public Nullable<int> wet { get; set; }
+        public Nullable<int> dry { get; set; }
+        public Nullable<int> domestic { get; set; }
+        public Nullable<int> sanitary { get; set; }
+
         public Nullable<int> gcType { get; set; }
 
         public int areaId { get; set; }
