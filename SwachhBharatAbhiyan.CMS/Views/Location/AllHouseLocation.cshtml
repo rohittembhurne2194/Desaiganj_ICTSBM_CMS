@@ -508,6 +508,11 @@
                     dump.classList.remove("btn-r");
                     dump.classList.add("pull-right");
                 } else {
+
+                    $('#SearchRow').show();
+                    $('#SearchSegType').hide();
+                    $('#seg_typeNew').val(0);
+
                     $('#txt_fdate').prop('disabled', false);
                     $('#selectnumber').prop('disabled', false);
                     $('#seg_type').prop('disabled', false);
