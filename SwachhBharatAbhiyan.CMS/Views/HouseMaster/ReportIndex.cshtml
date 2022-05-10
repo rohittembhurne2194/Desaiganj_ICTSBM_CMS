@@ -89,16 +89,27 @@
     .container_radio:nth-child(2) input ~ .checkmark1 {
         border: 2px solid #6fa570;
     }
-
     .container_radio:nth-child(3) input ~ .checkmark1 {
+        border: 2px solid #66a2d5;
+    }
+    .container_radio:nth-child(4) input ~ .checkmark1 {
+        border: 2px solid #186634;
+    }
+    .container_radio:nth-child(5) input ~ .checkmark1 {
+        border: 2px solid #8f8b28;
+    }
+    .container_radio:nth-child(6) input ~ .checkmark1 {
+        border: 2px solid #c384d3;
+    }
+    .container_radio:nth-child(7) input ~ .checkmark1 {
         border: 2px solid #d1655e;
     }
 
-    .container_radio:nth-child(4) input ~ .checkmark1 {
+    .container_radio:nth-child(8) input ~ .checkmark1 {
         border: 2px solid #e89f5f;
     }
 
-    .container_radio:nth-child(5) input ~ .checkmark1 {
+    .container_radio:nth-child(9) input ~ .checkmark1 {
         border: 2px solid #0086c3;
     }
     .container_radio:nth-child(1) input:checked ~ .checkmark1 {
@@ -108,16 +119,27 @@
     .container_radio:nth-child(2) input:checked ~ .checkmark1 {
         background-color: #6fa570;
     }
-
     .container_radio:nth-child(3) input:checked ~ .checkmark1 {
+        background-color: #66a2d5;
+    }
+    .container_radio:nth-child(4) input:checked ~ .checkmark1 {
+        background-color: #186634;
+    }
+    .container_radio:nth-child(5) input:checked ~ .checkmark1 {
+        background-color: #8f8b28;
+    }
+    .container_radio:nth-child(6) input:checked ~ .checkmark1 {
+        background-color: #c384d3;
+    }
+    .container_radio:nth-child(7) input:checked ~ .checkmark1 {
         background-color: #d1655e;
     }
 
-    .container_radio:nth-child(4) input:checked ~ .checkmark1 {
+    .container_radio:nth-child(8) input:checked ~ .checkmark1 {
         background-color: #e89f5f;
     }
 
-    .container_radio:nth-child(5) input:checked ~ .checkmark1 {
+    .container_radio:nth-child(9) input:checked ~ .checkmark1 {
         background-color: #0086c3;
     }
     /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -192,16 +214,16 @@
 
                 @* <label class="radio-inline"><input type="radio" name="optradio" checked></label>
 
-                    <label class="radio-inline"><input type="radio" name="optradio"></label>
+        <label class="radio-inline"><input type="radio" name="optradio"></label>
 
 
-                    <label class="radio-inline"><input type="radio" name="optradio"></label>
+        <label class="radio-inline"><input type="radio" name="optradio"></label>
                 *@
 
 
                 <label class="container_radio radio-inline" style="">
 
-                    <input type="radio" checked="checked" name="radio" value="4">
+                    <input type="radio" checked="checked" name="radio" value="-2">
                     @*<span style="vertical-align:middle"> सर्व रेकॉर्ड <br /> All Records </span>*@
                     <span style="vertical-align:middle"> All Records </span>
                     <span class="checkmark1">
@@ -220,7 +242,46 @@
                         <div class="checkmark_kick"></div>
                     </span>
                 </label>
+                <label class="container_radio radio-inline" style="">
 
+                    <input type="radio" name="radio" value="7">
+                    @*<span style="vertical-align:middle"> वर्णन उपलब्ध नाही <br /> Not Specified  </span>*@
+                    <span style="vertical-align:middle"> Dry  </span>
+                    <span class="checkmark1">
+                        <div class="checkmark_stem"></div>
+                        <div class="checkmark_kick"></div>
+                    </span>
+                </label>
+                <label class="container_radio radio-inline" style="">
+
+                    <input type="radio" name="radio" value="6">
+                    @*<span style="vertical-align:middle"> वर्णन उपलब्ध नाही <br /> Not Specified  </span>*@
+                    <span style="vertical-align:middle"> Wet  </span>
+                    <span class="checkmark1">
+                        <div class="checkmark_stem"></div>
+                        <div class="checkmark_kick"></div>
+                    </span>
+                </label>
+                <label class="container_radio radio-inline" style="">
+
+                    <input type="radio" name="radio" value="8">
+                    @*<span style="vertical-align:middle"> वर्णन उपलब्ध नाही <br /> Not Specified  </span>*@
+                    <span style="vertical-align:middle"> Domestic Hazardous </span>
+                    <span class="checkmark1">
+                        <div class="checkmark_stem"></div>
+                        <div class="checkmark_kick"></div>
+                    </span>
+                </label>
+                <label class="container_radio radio-inline" style="">
+
+                    <input type="radio" name="radio" value="9">
+                    @*<span style="vertical-align:middle"> वर्णन उपलब्ध नाही <br /> Not Specified  </span>*@
+                    <span style="vertical-align:middle">Sanitary </span>
+                    <span class="checkmark1">
+                        <div class="checkmark_stem"></div>
+                        <div class="checkmark_kick"></div>
+                    </span>
+                </label>
                 <label class="container_radio radio-inline" style="">
 
                     <input type="radio" name="radio" value="0">
@@ -328,11 +389,11 @@
 
 
         //var site = '/DisplayReports.aspx?FromDate=' + $('#txt_fdate').val() + '&ToDate=' + $('#txt_tdate').val();
-
+        debugger;
         var x = $('#myHiddenVar').val();
         var y = $('#myHiddenVar2').val();
         var z = $('#myHiddenVar3').val();
-        var Report_Name = "Ghar Sankalan Tapashil";
+        var Report_Name = "Ghar Sankalan Tapashil_New";
       
         var site = '/DisplayReports.aspx?FromDate=' + $('#txt_fdate').val() + '&ToDate=' + $('#txt_tdate').val() + '&AppID=' + x + '&DB_Name=' + y + '&DB_Source=' + z + '&ReportName=' + Report_Name;
         document.getElementById('iframemc').src = site;
@@ -351,9 +412,10 @@
         var z = $('#myHiddenVar3').val();
         //var z = $('#myHiddenVar2').val();
         $('#loader1').show();
-        var Report_Name = "Ghar Sankalan Tapashil";
+        var Report_Name = "Ghar Sankalan Tapashil_New";
         //var site = '/DisplayReports.aspx?FromDate=' + $('#txt_fdate').val() + '&ToDate=' + $('#txt_tdate').val() + '&UserId=' + $('#selectnumber').val() + '&Type=' + type;
         var site = '/DisplayReports.aspx?FromDate=' + $('#txt_fdate').val() + '&ToDate=' + $('#txt_tdate').val() + '&UserId=' + $('#selectnumber').val() + '&Type=' + type + '&AppID=' + x + '&DB_Name=' + y + '&DB_Source=' + z + '&ReportName=' + Report_Name;
+        
         document.getElementById('iframemc').src = site;
 
         $('#iframemc').on('load', function () {
