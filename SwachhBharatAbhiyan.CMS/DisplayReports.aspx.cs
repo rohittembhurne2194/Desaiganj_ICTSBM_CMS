@@ -36,32 +36,66 @@ namespace SwachhBharatAbhiyan.CMS
                     var UserId = Request.QueryString["UserId"];
                     var DyId = Request.QueryString["DyId"];
                     var garbageType = Request.QueryString["Type"];
+                    var wastetype = Request.QueryString["Type"];
 
                     if (UserId == "-1")
                     {
                         UserId = null;
                     }
 
-                    if (garbageType == "4" || garbageType == "undefined")
+                    if (garbageType == "-2" || garbageType == "undefined")
                     {
                         garbageType = null;
+                        wastetype = null;
                     }
 
+                    if (garbageType == "6")
+                    {
+                        garbageType = "1";
+                        wastetype = "1";
+                    }
+
+                    if (garbageType == "7")
+                    {
+                        garbageType = "1";
+                        wastetype = "2";
+                    }
+                    if (garbageType == "8")
+                    {
+                        garbageType = "1";
+                        wastetype = "3";
+                    }
+                    if (garbageType == "9")
+                    {
+                        garbageType = "1";
+                        wastetype = "4";
+                    }
+                    if (garbageType == "-1")
+                    {
+                        garbageType = "-1";
+                        wastetype = null;
+                    }
+                    if (garbageType == "2")
+                    {
+                        garbageType = "2";
+                        wastetype = null;
+                    }
 
                     //string urlReportServer = "http://TESTYOCC-1:80/reportServer";
                     //  string urlReportServer = "http://YOCC-2:82/reportServer";
                     //string urlReportServer = "http://192.168.100.123/ReportServer";
                     //string urlReportServer = "http://192.168.100.123/ReportServer";
 
-                    string urlReportServer = "http://202.65.157.253:85/ReportServer";
+                    // string urlReportServer = "http://202.65.157.253:85/ReportServer";
+                    string urlReportServer = "http://202.65.157.254/ReportServer";
                     //string urlReportServer = "http://COMP-7/ReportServer";
                     //rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Administrator", "Pass@123", "192.168.100.7");
-                    rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Administrator", "Telec0m#B!9V", "202.65.157.253");
+                    rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Administrator", "Telec0m#B!9V", "202.65.157.254");
 
                     rptViewer.ProcessingMode = ProcessingMode.Remote;
 
                     rptViewer.ServerReport.ReportServerUrl = new Uri(urlReportServer);
-                    rptViewer.ServerReport.ReportPath = "/ICTSBM_BI_Reports/" + ReportName;
+                    rptViewer.ServerReport.ReportPath = "/Desaiganj_ICTSBM/" + ReportName;
                     rptViewer.ShowToolBar = true;
                     rptViewer.BackColor = System.Drawing.Color.White;
                     //rptViewer.Parent.ResolveClientUrl.
@@ -78,6 +112,22 @@ namespace SwachhBharatAbhiyan.CMS
                         param[6] = new ReportParameter("DBSource", DB_Source);
 
 
+                        rptViewer.ServerReport.SetParameters(param);
+
+                        // param[1] = new ReportParameter("clientid", _userInfo.ClientID.ToString());
+                    }
+                    else if (ReportName == "Ghar Sankalan Tapashil_New")
+                    {
+                        ReportParameter[] param = new ReportParameter[8];
+                        //param[0] = new ReportParameter("Appid", AppID);
+                        param[0] = new ReportParameter("from", FromDate);
+                        param[1] = new ReportParameter("to", ToDate);
+                        param[2] = new ReportParameter("userid", UserId);
+                        param[3] = new ReportParameter("gartype", garbageType);
+                        param[4] = new ReportParameter("DBName", DB_Name);
+                        param[5] = new ReportParameter("wastetype", wastetype);
+                        param[6] = new ReportParameter("id", AppID);
+                        param[7] = new ReportParameter("DBSource", DB_Source);
                         rptViewer.ServerReport.SetParameters(param);
 
                         // param[1] = new ReportParameter("clientid", _userInfo.ClientID.ToString());
