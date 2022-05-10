@@ -56,6 +56,7 @@ namespace SwachBharat.CMS.Bll.Repository.ChildRepository
 
 
         SBALUserLocationMapView GetLocation(int teamId,string Emptype);
+        SBALUserLocationMapView GetEmpList(int teamId,string Emptype);
         List<SBALUserLocationMapView> GetAllUserLocation(string date,string Emptype);
         // for admin
         List<SBALUserLocationMapView> GetAdminLocation();

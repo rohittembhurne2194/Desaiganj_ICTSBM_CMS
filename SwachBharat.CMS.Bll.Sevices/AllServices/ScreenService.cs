@@ -1329,6 +1329,114 @@ namespace SwachBharat.CMS.Bll.Services
             }
         }
 
+        public SBALUserLocationMapView GetEmpDetails(int teamId, string Emptype)
+        {
+            try
+            {
+                if (Emptype == "NULL" || Emptype == null)
+                {
+                    using (var db = new DevChildSwachhBharatNagpurEntities(AppID))
+                    {
+                      
+      
+                    SBALUserLocationMapView loc = new SBALUserLocationMapView();
+                          
+                    var user = db.UserMasters.FirstOrDefault();
+                    loc.userName = user.userName;
+                    loc.UserList = ListEmp(null);
+                    loc.userMobile = user.userMobileNumber;
+                    loc.type = Convert.ToInt32(user.Type);
+                         
+
+                      return loc;
+                      
+
+                    }
+                }
+                else if (Emptype == "L")
+                {
+                    using (var db = new DevChildSwachhBharatNagpurEntities(AppID))
+                    {
+                        
+                            SBALUserLocationMapView loc = new SBALUserLocationMapView();
+                            var user = db.UserMasters.FirstOrDefault();
+                            loc.userName = user.userName;
+                            loc.UserList = ListEmp(Emptype);
+                            loc.userMobile = user.userMobileNumber;
+                            loc.type = Convert.ToInt32(user.Type);
+                           
+
+                            return loc;
+                    
+
+                    }
+                }
+                else if (Emptype == "S")
+                {
+                    using (var db = new DevChildSwachhBharatNagpurEntities(AppID))
+                    {
+                       
+                          
+                            
+                            SBALUserLocationMapView loc = new SBALUserLocationMapView();
+                            var user = db.UserMasters.FirstOrDefault();
+                            loc.userName = user.userName;
+                            loc.UserList = ListEmp(Emptype);
+                            loc.userMobile = user.userMobileNumber;
+                            loc.type = Convert.ToInt32(user.Type);
+                          
+
+                            return loc;
+                     
+
+                    }
+                }
+                else
+                {
+                    using (var db = new DevChildSwachhBharatNagpurEntities(AppID))
+                    {
+                        var Details = db.Locations.Where(c => c.EmployeeType == Emptype).FirstOrDefault();
+
+                        if (teamId > 0)
+                        {
+                            //Details = db.Locations.Where(c => c.locId == teamId && c.EmployeeType == Emptype).FirstOrDefault();
+                            Details = db.Locations.Where(c => c.locId == teamId).FirstOrDefault();
+
+                        }
+
+                        if (Details != null)
+                        {
+                            //var atten = db.Daily_Attendance.Where(c => c.daDate == EntityFunctions.TruncateTime(Details.datetime) && c.userId == Details.userId && c.EmployeeType == Emptype).FirstOrDefault();
+                            var atten = db.Daily_Attendance.Where(c => c.daDate == EntityFunctions.TruncateTime(Details.datetime) && c.userId == Details.userId).FirstOrDefault();
+                            SBALUserLocationMapView loc = new SBALUserLocationMapView();
+                            var user = db.UserMasters.Where(c => c.userId == Details.userId).FirstOrDefault();
+                            loc.userName = user.userName;
+                            loc.date = Convert.ToDateTime(Details.datetime).ToString("dd/MM/yyyy");
+                            loc.time = Convert.ToDateTime(Details.datetime).ToString("hh:mm tt");
+                            loc.address = checkNull(Details.address).Replace("Unnamed Road, ", "");
+                            loc.lat = Details.lat;
+                            loc.log = Details.@long;
+                            loc.UserList = ListUser(Emptype);
+                            loc.userMobile = user.userMobileNumber;
+                            loc.type = Convert.ToInt32(user.Type);
+                            try { loc.vehcileNumber = atten.vehicleNumber; } catch { loc.vehcileNumber = ""; }
+
+                            return loc;
+                        }
+                        else
+                        {
+                            return new SBALUserLocationMapView();
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new SBALUserLocationMapView();
+            }
+        }
         public List<SBALUserLocationMapView> GetAllUserLocation(string date, string Emptype)
         {
             List<SBALUserLocationMapView> userLocation = new List<SBALUserLocationMapView>();
@@ -3378,6 +3486,25 @@ namespace SwachBharat.CMS.Bll.Services
             try
             {
                 user = db.UserMasters.Where(c => c.isActive == true && c.EmployeeType == Emptype).ToList()
+                    .Select(x => new SelectListItem
+                    {
+                        Text = x.userName,
+                        Value = x.userId.ToString()
+                    }).OrderBy(t => t.Text).ToList();
+
+            }
+            catch (Exception ex) { throw ex; }
+
+            return user;
+        }
+        public List<SelectListItem> ListEmp(string Emptype)
+        {
+            var user = new List<SelectListItem>();
+            SelectListItem itemAdd = new SelectListItem() { Text = "--Select Employee--", Value = "0" };
+
+            try
+            {
+                user = db.UserMasters.Where(c => c.EmployeeType == Emptype).ToList()
                     .Select(x => new SelectListItem
                     {
                         Text = x.userName,

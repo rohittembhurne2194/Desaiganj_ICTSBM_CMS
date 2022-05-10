@@ -171,7 +171,10 @@ namespace SwachBharat.CMS.Bll.Repository.ChildRepository
         {
             return screenService.GetLocationDetails(teamId, Emptype);
         }
-
+        public SBALUserLocationMapView GetEmpList(int teamId, string Emptype)
+        {
+            return screenService.GetEmpDetails(teamId, Emptype);
+        }
         public List<SBALUserLocationMapView> GetAllUserLocation(string date,string Emptype)
         {
             return screenService.GetAllUserLocation(date, Emptype);
