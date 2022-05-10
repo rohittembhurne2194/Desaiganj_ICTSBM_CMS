@@ -133,7 +133,20 @@ namespace SwachhBharatAbhiyan.CMS.Controllers
             }
             else
                 return Redirect("/Account/Login");
-        } 
+        }
+        public ActionResult EmployeeList(string rn)
+        {
+            if (SessionHandler.Current.AppId != 0)
+            {
+                SBALUserLocationMapView obj = new SBALUserLocationMapView();
+
+                obj = childRepository.GetEmpList(-1, rn);
+                return Json(obj.UserList, JsonRequestBehavior.AllowGet);
+
+            }
+            else
+                return Redirect("/Account/Login");
+        }
         public ActionResult UserCurrentLocation(int userId,string date)
         {
             if (SessionHandler.Current.AppId != 0)
