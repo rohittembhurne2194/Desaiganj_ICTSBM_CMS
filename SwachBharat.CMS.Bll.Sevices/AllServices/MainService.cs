@@ -842,22 +842,22 @@ namespace SwachBharat.CMS.Bll.Services
             }
             else
             {
-                var ULBList = dbMain.EmployeeMasters.Where(x => x.LoginId == LoginId && x.Password == Password).FirstOrDefault();
-                string s = ULBList.isActiveULB;
-                string[] values = s.Split(',');
-                for (int i = 0; i < values.Length; i++)
-                {
-                    values[i] = values[i].Trim();
-                    int u = 0;
-                    if (values[i] != "")
-                    {
-                        u = Convert.ToInt32(values[i]);
-                        var details = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika" && x.AppId == u).OrderBy(x => x.AppName).FirstOrDefault();
-                        appNames.Add(details);
-                    }
+                //var ULBList = dbMain.EmployeeMasters.Where(x => x.LoginId == LoginId && x.Password == Password).FirstOrDefault();
+                //string s = ULBList.isActiveULB;
+                //string[] values = s.Split(',');
+                //for (int i = 0; i < values.Length; i++)
+                //{
+                //    values[i] = values[i].Trim();
+                //    int u = 0;
+                //    if (values[i] != "")
+                //    {
+                //        u = Convert.ToInt32(values[i]);
+                //        var details = dbMain.AppDetails.Where(x => x.IsActive == true && x.AppName != "Thane Mahanagar Palika" && x.AppId == u).OrderBy(x => x.AppName).FirstOrDefault();
+                //        appNames.Add(details);
+                //    }
 
 
-                }
+                //}
 
 
 
